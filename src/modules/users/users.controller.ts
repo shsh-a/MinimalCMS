@@ -6,38 +6,63 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PrismaService } from 'src/providers/prisma.service';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { Policy } from 'src/decorators/policy.decorators';
 
 @Controller('users')
+@ApiTags('users')
+@ApiBearerAuth()
+@UseGuards(AuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @ApiCreatedResponse({ type: CreateUserDto })
+  @Policy('user_post')
   create(@Body() createUserDto: CreateUserDto) {
-    return PrismaService.name;
+    return this.usersService.create(createUserDto);
   }
 
   @Get()
+  @ApiOkResponse({ type: [CreateUserDto] })
+  @Policy('user_get')
   findAll() {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @Get(':username')
+  @ApiOkResponse({ type: CreateUserDto })
+  @Policy('user_get_one')
+  findOne(@Param('username') username: string) {
+    return this.usersService.findOne(username);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Patch(':username')
+  @ApiOkResponse({ type: CreateUserDto })
+  @Policy('user_patch_one')
+  update(
+    @Param('username') username: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.usersService.update(username, updateUserDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @Delete(':username')
+  @ApiOkResponse({ type: CreateUserDto })
+  @Policy('user_delete_one')
+  remove(@Param('username') username: string) {
+    return this.usersService.remove(username);
   }
 }
