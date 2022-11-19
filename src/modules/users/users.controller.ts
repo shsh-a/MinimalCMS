@@ -19,7 +19,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { Policy } from 'src/decorators/policy.decorators';
+import { Policy } from 'src/decorators/policy.decorator';
+import { User } from 'src/decorators/user.decorator';
 
 @Controller('users')
 @ApiTags('users')
@@ -55,8 +56,9 @@ export class UsersController {
   update(
     @Param('username') username: string,
     @Body() updateUserDto: UpdateUserDto,
+    @User('role') role: string,
   ) {
-    return this.usersService.update(username, updateUserDto);
+    return this.usersService.update(username, updateUserDto, role);
   }
 
   @Delete(':username')

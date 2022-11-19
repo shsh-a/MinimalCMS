@@ -5,12 +5,6 @@ export class UpdateUserDto {
   role: string;
 
   @ApiProperty({ required: false })
-  oldPassword: string;
-
-  @ApiProperty({ required: false })
-  newPassword: string;
-
-  @ApiProperty({ required: false })
   email: string;
 
   @ApiProperty({ required: false })
