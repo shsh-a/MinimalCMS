@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PrismaService } from 'src/db/prisma/prisma.service';
 import { AuthService } from './auth.service';
@@ -20,9 +25,8 @@ export class AuthGuard implements CanActivate {
       }
       // check jwt token
       const user = await this.auth.validate(token);
-      if (user instanceof Error) {
-        return false;
-      }
+      if (user instanceof Error)
+        throw new UnauthorizedException('Authorization failed.');
 
       // check user role
       user.username = user.sub;
