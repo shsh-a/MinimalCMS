@@ -8,11 +8,11 @@ datasource db {
 }
 
 model RefreshTokenStates {
-  username String    @db.VarChar(45)
-  version  Int       @id @default(autoincrement())
-  addedAt  DateTime? @default(now()) @db.Timestamp(0)
-  Users    Users     @relation(fields: [username], references: [username], onDelete: Cascade, onUpdate: NoAction, map: "fk_refreshTokenStates_1")
+  username String @db.VarChar(45)
+  version  String @db.VarChar(45)
+  Users    Users  @relation(fields: [username], references: [username], onDelete: Cascade, onUpdate: NoAction, map: "fk_refreshTokenStates_1")
 
+  @@id([version, username])
   @@index([username], map: "fk_refreshTokenStates_1_idx")
 }
 
